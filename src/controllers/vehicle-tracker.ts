@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import models from '../models';
-const Op = models.Sequelize.Op;
+import { db, DB } from '../models';
+// const Op = db.Sequelize.Op;
 import path from 'path';
 // added
 import fs from 'fs-extra';
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export const allVehicles = (req: Request, res: Response) => {
-  models.Vehicle.findAll({
+  db.Vehicle.findAll({
     where: {
       archive: false,
     },
@@ -39,7 +39,7 @@ export const allVehicles = (req: Request, res: Response) => {
 
 export const allVehiclesByType = (req: Request, res: Response) => {
   const vehicle_type = req.params.type;
-  models.Vehicle.findAll({
+  db.Vehicle.findAll({
     where: {
       type: vehicle_type,
     },
@@ -72,7 +72,7 @@ export const addVehicle = (req: Request, res: Response) => {
     const file = req.file;
     // check for file
     if (file !== undefined) vehicle_data.image = file.filename;
-    models.Vehicle.create(vehicle_data)
+    db.Vehicle.create(vehicle_data)
       .then((result: any) => {
         console.log('vehicle created');
         const vehicle = result.dataValues;
@@ -87,27 +87,27 @@ export const addVehicle = (req: Request, res: Response) => {
 
 export const getVehicleById = (req: Request, res: Response) => {
   const id = req.params.id;
-  models.Vehicle.findOne({
+  db.Vehicle.findOne({
     where: {
       id: id,
     },
     include: [
       {
-        model: models.Maintenance,
+        model: db.Maintenance,
         as: 'Maintenance',
         // where: {
         //   archive: false
         // }
       },
       {
-        model: models.Repairs,
+        model: db.Repairs,
         as: 'Repairs',
         // where: {
         //   archive: false
         // }
       },
       {
-        model: models.Vehicle_Image,
+        model: db.Vehicle_Image,
         as: 'Images',
       },
     ],
@@ -124,7 +124,7 @@ export const getVehicleById = (req: Request, res: Response) => {
 export const updateVehicle = (req: Request, res: Response) => {
   const id = req.params.id;
   const data = req.body;
-  models.Vehicle.update(data, {
+  db.Vehicle.update(data, {
     where: {
       id: id,
     },
@@ -158,7 +158,7 @@ export const updateVehicleImage = (req: Request, res: Response) => {
     let data: any = {};
     // check for file
     if (file !== undefined) data.image = file.filename;
-    models.Vehicle.update(data, {
+    db.Vehicle.update(data, {
       where: {
         id: id,
       },
@@ -193,7 +193,7 @@ export const updatePinkSlip = (req: Request, res: Response) => {
     let data: any = {};
     // check for file
     if (file !== undefined) data.pink_slip = file.filename;
-    models.Vehicle.update(data, {
+    db.Vehicle.update(data, {
       where: {
         id: id,
       },
@@ -212,7 +212,7 @@ export const updatePinkSlip = (req: Request, res: Response) => {
 
 export const archiveVehicleById = (req: Request, res: Response) => {
   const id = req.params.id;
-  models.Vehicle.update(
+  db.Vehicle.update(
     {
       archive: true,
     },
@@ -257,7 +257,7 @@ export const addImages = (req: Request, res: Response) => {
         file_type: file.mimetype,
         file_url: file.filename,
       };
-      models.Vehicle_Image.create(data)
+      db.Vehicle_Image.create(data)
         .then((file: any) => {})
         .catch((error: any) => {
           console.log(error);
@@ -289,7 +289,7 @@ export const fileUpload = (req: Request, res: Response, next: NextFunction) => {
 // delete
 export const addVehiclePostman = (req: Request, res: Response) => {
   const vehicle_data = req.body;
-  models.Vehicle.create(vehicle_data)
+  db.Vehicle.create(vehicle_data)
     .then((vehicle: any) => {
       res.status(201).send('created');
     })

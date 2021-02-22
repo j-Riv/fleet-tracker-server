@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import jwt from 'jwt-simple';
 import bCrypt from 'bcrypt-nodejs';
-import models from '../models/';
+import { db } from '../models';
 dotenv.config();
 
 function tokenForUser(user: any) {
@@ -15,7 +15,7 @@ function tokenForUser(user: any) {
 }
 
 export const signin = (req: Request, res: Response) => {
-  models.User.findOne({
+  db.User.findOne({
     where: {
       email: req.body.email,
     },
@@ -34,7 +34,7 @@ export const signin = (req: Request, res: Response) => {
 };
 
 export const register = (req: Request, res: Response) => {
-  models.User.update(
+  db.User.update(
     {
       admin: false,
       displayName: req.body.displayName,
@@ -60,7 +60,7 @@ export const register = (req: Request, res: Response) => {
 export const createUser = (req: Request, res: Response) => {
   const newUser = req.body;
   // See if a user with the given email exists
-  models.User.findOne({
+  db.User.findOne({
     where: {
       email: newUser.email,
     },
@@ -75,11 +75,11 @@ export const createUser = (req: Request, res: Response) => {
       };
       let hashedPassword = generateHash(newUser.password);
       // If a user with email does NOT exist, create and save user record
-      models.User.create({
+      db.User.create({
         email: newUser.email,
         password: hashedPassword,
         admin: newUser.admin,
-      }).then((user: any, created: any) => {
+      }).then((user: any) => {
         if (!user) {
           console.log('Error creating user.');
           res.status(400).send('something went wrong');
@@ -101,7 +101,7 @@ export const createUser = (req: Request, res: Response) => {
 export const getCurrentUser = (req: Request, res: Response) => {
   const token = req.body.token;
   const decoded = jwt.decode(token, process.env.PASSPORT_SECRET);
-  models.User.findOne({
+  db.User.findOne({
     where: {
       id: decoded.sub,
     },
@@ -118,7 +118,7 @@ export const getCurrentUser = (req: Request, res: Response) => {
 };
 
 export const getAllUsers = (req: Request, res: Response) => {
-  models.User.findAll({
+  db.User.findAll({
     attributes: ['id', 'email', 'displayName', 'admin'],
   })
     .then((result: any) => {
@@ -142,7 +142,7 @@ export const updateUser = (req: Request, res: Response) => {
     let hashedPassword = generateHash(data.password);
     data.password = hashedPassword;
   }
-  models.User.update(data, {
+  db.User.update(data, {
     where: {
       id: id,
     },
@@ -173,7 +173,7 @@ export const updateUserPassword = (req: Request, res: Response) => {
     console.log('update admin');
     userData.admin = data.admin;
   }
-  models.User.findOne({
+  db.User.findOne({
     where: {
       // id: decoded.sub
       id: req.body.data.id,
@@ -202,7 +202,7 @@ export const updateUserPassword = (req: Request, res: Response) => {
 
 export const deleteUser = (req: Request, res: Response) => {
   const user = req.body;
-  models.User.destroy({
+  db.User.destroy({
     where: {
       id: user.id,
     },

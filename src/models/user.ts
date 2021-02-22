@@ -1,7 +1,25 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model, Sequelize } from 'sequelize';
 
-module.exports = function (sequelize: Sequelize) {
-  const User = sequelize.define('User', {
+export interface UserAttributes {
+  id?: number;
+  googleId?: string;
+  displayName?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  email?: string;
+  password?: string;
+  admin?: boolean;
+}
+
+export interface UserModel extends Model<UserAttributes>, UserAttributes {}
+export class User extends Model<UserModel, UserAttributes> {}
+
+export type UserStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): UserModel;
+};
+
+export function UserFactory(sequelize: Sequelize): UserStatic {
+  return <UserStatic>sequelize.define('User', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV1,
@@ -37,6 +55,4 @@ module.exports = function (sequelize: Sequelize) {
       defaultValue: false,
     },
   });
-
-  return User;
-};
+}
