@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import models from '../models';
+import { db } from '../models';
 import fs from 'fs';
-const Op = models.Sequelize.Op;
+// const Op = db.Sequelize.Op;
 import path from 'path';
 
 // upload
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export const allMaintenance = (req: Request, res: Response) => {
-  models.Maintenance.findAll({
+  db.Maintenance.findAll({
     where: {
       archive: false,
     },
@@ -38,7 +38,7 @@ export const allMaintenance = (req: Request, res: Response) => {
 };
 
 export const allRepairs = (req: Request, res: Response) => {
-  models.Repairs.findAll({
+  db.Repairs.findAll({
     where: {
       archive: false,
     },
@@ -54,13 +54,13 @@ export const allRepairs = (req: Request, res: Response) => {
 
 export const getMaintenanceById = (req: Request, res: Response) => {
   const id = req.params.id;
-  models.Maintenance.findOne({
+  db.Maintenance.findOne({
     where: {
       id: id,
     },
     include: [
       {
-        model: models.Maintenance_File,
+        model: db.Maintenance_File,
         as: 'Maintenance_Files',
       },
     ],
@@ -76,13 +76,13 @@ export const getMaintenanceById = (req: Request, res: Response) => {
 
 export const getRepairById = (req: Request, res: Response) => {
   const id = req.params.id;
-  models.Repairs.findOne({
+  db.Repairs.findOne({
     where: {
       id: id,
     },
     include: [
       {
-        model: models.Repair_File,
+        model: db.Repair_File,
         as: 'Repair_Files',
       },
     ],
@@ -98,7 +98,7 @@ export const getRepairById = (req: Request, res: Response) => {
 
 export const createMaintenanceEvent = (req: Request, res: Response) => {
   const event = req.body;
-  models.Maintenance.create(event)
+  db.Maintenance.create(event)
     .then((event: any) => {
       res.status(201).send('created');
     })
@@ -110,7 +110,7 @@ export const createMaintenanceEvent = (req: Request, res: Response) => {
 
 export const createRepairEvent = (req: Request, res: Response) => {
   const event = req.body;
-  models.Repairs.create(event)
+  db.Repairs.create(event)
     .then((event: any) => {
       res.status(201).send('created');
     })
@@ -144,7 +144,7 @@ export const addMaintenanceFiles = (req: Request, res: Response) => {
         file_type: file.mimetype,
         file_url: file.filename,
       };
-      models.Maintenance_File.create(data)
+      db.Maintenance_File.create(data)
         .then((file: any) => {})
         .catch((error: any) => {
           console.log(error);
@@ -179,7 +179,7 @@ export const addRepairFiles = (req: Request, res: Response) => {
         file_type: file.mimetype,
         file_url: file.filename,
       };
-      models.Repair_File.create(data)
+      db.Repair_File.create(data)
         .then((file: any) => {})
         .catch((error: any) => {
           console.log(error);
@@ -193,7 +193,7 @@ export const addRepairFiles = (req: Request, res: Response) => {
 export const updateMaintenanceEvent = (req: Request, res: Response) => {
   const id = req.params.id;
   const data = req.body;
-  models.Maintenance.update(data, {
+  db.Maintenance.update(data, {
     where: {
       id: id,
     },
@@ -213,7 +213,7 @@ export const updateMaintenanceEvent = (req: Request, res: Response) => {
 export const updateRepairEvent = (req: Request, res: Response) => {
   const id = req.params.id;
   const data = req.body;
-  models.Repairs.update(data, {
+  db.Repairs.update(data, {
     where: {
       id: id,
     },
@@ -232,7 +232,7 @@ export const updateRepairEvent = (req: Request, res: Response) => {
 export const archiveMaintenanceEventById = (req: Request, res: Response) => {
   const id = req.params.id;
   const data = req.body;
-  models.Maintenance.update(
+  db.Maintenance.update(
     {
       archive: true,
     },
@@ -257,7 +257,7 @@ export const archiveMaintenanceEventById = (req: Request, res: Response) => {
 export const archiveRepairEventById = (req: Request, res: Response) => {
   const id = req.params.id;
   const data = req.body;
-  models.Repairs.update(
+  db.Repairs.update(
     {
       archive: true,
     },
