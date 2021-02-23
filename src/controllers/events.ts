@@ -67,8 +67,10 @@ export const getMaintenanceById = (req: Request, res: Response) => {
       },
     ],
   })
-    .then((result: any) => {
-      const record = result.dataValues;
+    .then((result: MaintenanceRecord | null) => {
+      const record = result?.get();
+      console.log('GET MAINTENANCE BY ID');
+      console.log(record);
       res.status(200).json({ record });
     })
     .catch(error => {
@@ -89,8 +91,10 @@ export const getRepairById = (req: Request, res: Response) => {
       },
     ],
   })
-    .then((result: any) => {
-      const record = result.dataValues;
+    .then((result: RepairRecord | null) => {
+      const record = result?.get();
+      console.log('GET REPAIR BY ID');
+      console.log(record);
       res.status(200).json({ record });
     })
     .catch(error => {
