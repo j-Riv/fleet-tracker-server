@@ -90,7 +90,7 @@ Repair_File.belongsTo(Repairs, {
 });
 Repairs.hasMany(Repair_File, {
   as: 'Repair_Files',
-  foreignKey: 'Repair_id',
+  foreignKey: 'repair_id',
   sourceKey: 'id',
   onDelete: 'cascade',
   hooks: true,

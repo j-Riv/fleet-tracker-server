@@ -11,7 +11,7 @@ import passport from 'passport';
 // routes
 // import auth from './routes/oauth';
 import user from './routes/user';
-import vehicles from './routes/vehicle-tracker';
+import vehicles from './routes/vehicle';
 
 import models from './models';
 

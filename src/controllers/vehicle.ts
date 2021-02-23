@@ -1,22 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import fs from 'fs-extra';
 import { db } from '../models';
 import { VehicleModel as Vehicle } from '../models/vehicle';
 import { VehicleImageModel as VehicleImage } from '../models/vehicle_images';
-import path from 'path';
-// added
-import fs from 'fs-extra';
 
 // upload
 import multer from 'multer';
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
-    // cb(null, path.join(__dirname, '../../public/uploads'));
     const v_path = '../../public/uploads/vehicles/';
     fs.mkdirs(v_path);
     cb(null, path.join(__dirname, v_path));
   },
   filename: function (req, file, cb) {
-    // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     cb(null, file.originalname);
   },
 });
@@ -74,10 +71,12 @@ export const addVehicle = (req: Request, res: Response) => {
     // check for file
     if (file !== undefined) vehicle_data.image = file.filename;
     db.Vehicle.create(vehicle_data)
-      .then((result: any) => {
+      .then((result: Vehicle) => {
         console.log('vehicle created');
-        const vehicle = result.dataValues;
-        res.status(201).json({ vehicle_id: vehicle.id });
+        const vehicle = result.get('id');
+        // const vehicle = result.dataValues;
+        // res.status(201).json({ vehicle_id: vehicle.id });
+        res.status(201).json({ vehicle_id: vehicle });
       })
       .catch(error => {
         console.log(error);
@@ -113,8 +112,10 @@ export const getVehicleById = (req: Request, res: Response) => {
       },
     ],
   })
-    .then((result: any) => {
-      const vehicle = result.dataValues;
+    .then((result: Vehicle | null) => {
+      const vehicle = result?.get();
+      console.log('GET VEHICLE BY ID');
+      console.log(vehicle);
       res.status(200).json({ vehicle });
     })
     .catch(error => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import * as Vehicles from '../controllers/vehicle-tracker';
+import * as Vehicles from '../controllers/vehicle';
 import * as Events from '../controllers/events';
 import dotenv from 'dotenv';
 // auth dependencies
