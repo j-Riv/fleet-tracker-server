@@ -28,9 +28,9 @@ Create MySQL DB and update DB config at `/src/models/index.ts`
 
 ```javascript
 const sequelize = new Sequelize(
-  (process.env.DB_NAME = 'database_name'),
-  (process.env.DB_USER = 'database_user'),
-  (process.env.DB_PASSWORD = 'database_password'),
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
     port: Number(process.env.DB_PORT) || 3306, // 54320
     host: process.env.DB_HOST || 'localhost',

@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { UserFactory, UserStatic } from './user';
 import { VehicleFactory, VehicleStatic } from './vehicle';
@@ -9,6 +10,7 @@ import {
   MaintenanceFileFactory,
   MaintenanceFileStatic,
 } from './maintenance_file';
+dotenv.config();
 
 export interface DB {
   sequelize: Sequelize;
@@ -22,9 +24,9 @@ export interface DB {
 }
 
 const sequelize = new Sequelize(
-  (process.env.DB_NAME = 'vehicle_tracker'),
-  (process.env.DB_USER = 'root'),
-  (process.env.DB_PASSWORD = 'password'),
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
     port: Number(process.env.DB_PORT) || 3306, // 54320
     host: process.env.DB_HOST || 'localhost',
