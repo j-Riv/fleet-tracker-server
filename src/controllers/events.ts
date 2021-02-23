@@ -11,16 +11,11 @@ import { RepairFileModel as RepairFile } from '../models/repair_file';
 import multer from 'multer';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // cb(null, path.join(__dirname, '../../public/uploads'));
     let r_path = '../../public/uploads/vehicles/records/';
-    // fs.mkdir(r_path, { recursive: true }, err => {
-    //   console.log(err);
-    // });
     fs.mkdirs(r_path);
     cb(null, path.join(__dirname, r_path));
   },
   filename: function (req, file, cb) {
-    // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     cb(null, file.originalname);
   },
 });

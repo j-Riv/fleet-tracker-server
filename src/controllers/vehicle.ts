@@ -9,13 +9,11 @@ import { VehicleImageModel as VehicleImage } from '../models/vehicle_images';
 import multer from 'multer';
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
-    // cb(null, path.join(__dirname, '../../public/uploads'));
     const v_path = '../../public/uploads/vehicles/';
     fs.mkdirs(v_path);
     cb(null, path.join(__dirname, v_path));
   },
   filename: function (req, file, cb) {
-    // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     cb(null, file.originalname);
   },
 });
