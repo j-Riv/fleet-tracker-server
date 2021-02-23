@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import fs from 'fs-extra';
 import { db } from '../models';
 import { VehicleModel as Vehicle } from '../models/vehicle';
 import { VehicleImageModel as VehicleImage } from '../models/vehicle_images';
-import path from 'path';
-// added
-import fs from 'fs-extra';
 
 // upload
 import multer from 'multer';

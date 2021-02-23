@@ -1,20 +1,23 @@
 import { Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs-extra';
 import { db } from '../models';
 import { MaintenanceModel as MaintenanceRecord } from '../models/maintenance';
 import { RepairsModel as RepairRecord } from '../models/repairs';
 import { MaintenanceFileModel as MaintenanceFile } from '../models/maintenance_file';
 import { RepairFileModel as RepairFile } from '../models/repair_file';
-import fs from 'fs';
 
 // upload
 import multer from 'multer';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // cb(null, path.join(__dirname, '../../public/uploads'));
-    let r_path = '../../public/uploads/vehicles/records';
-    fs.mkdir(r_path, { recursive: true }, err => {
-      console.log(err);
-    });
+    let r_path = '../../public/uploads/vehicles/records/';
+    // fs.mkdir(r_path, { recursive: true }, err => {
+    //   console.log(err);
+    // });
+    fs.mkdirs(r_path);
+    cb(null, path.join(__dirname, r_path));
   },
   filename: function (req, file, cb) {
     // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
@@ -151,13 +154,14 @@ export const addMaintenanceFiles = (req: Request, res: Response) => {
         file_url: file.filename,
       };
       db.Maintenance_File.create(data)
-        .then((file: MaintenanceFile) => {})
+        .then((file: MaintenanceFile) => {
+          res.status(201).send('created');
+        })
         .catch(error => {
           console.log(error);
           res.status(204).send('something went wrong');
         });
     });
-    res.status(201).send('created');
   });
 };
 
@@ -178,6 +182,7 @@ export const addRepairFiles = (req: Request, res: Response) => {
     console.log('Files Uploaded');
     const files: any = req.files;
     console.log(files);
+    console.log('REPAIR ID', id);
 
     files.forEach((file: any) => {
       let data = {
@@ -186,13 +191,14 @@ export const addRepairFiles = (req: Request, res: Response) => {
         file_url: file.filename,
       };
       db.Repair_File.create(data)
-        .then((file: RepairFile) => {})
+        .then((file: RepairFile) => {
+          res.status(201).send('created');
+        })
         .catch(error => {
           console.log(error);
           res.status(204).send('something went wrong');
         });
     });
-    res.status(201).send('created');
   });
 };
 
