@@ -1,5 +1,5 @@
 {
-    "name": "vehicle-tracker-server",
+    "name": "fleet-tracker-server",
     "version": "1.0.0",
     "description": "Node/Express/Sequelize Backend",
     "main": "server.js",

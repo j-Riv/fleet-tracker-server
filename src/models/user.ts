@@ -9,6 +9,8 @@ export interface UserAttributes {
   email?: string;
   password?: string;
   admin?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UserModel extends Model<UserAttributes>, UserAttributes {}

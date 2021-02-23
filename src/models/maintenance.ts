@@ -1,7 +1,7 @@
 import { BuildOptions, DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface MaintenanceAttributes {
-  id?: number;
+  id?: string;
   type: string;
   location: string;
   start_date: string;
@@ -10,6 +10,9 @@ export interface MaintenanceAttributes {
   event_url: string;
   active: boolean;
   archive: boolean;
+  vehicle_id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface MaintenanceModel

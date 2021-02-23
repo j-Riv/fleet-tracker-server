@@ -4,6 +4,9 @@ export interface MaintenanceFileAttributes {
   id?: number;
   file_type: string;
   file_url: string;
+  maintenance_id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface MaintenanceFileModel

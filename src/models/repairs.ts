@@ -10,6 +10,9 @@ export interface RepairsAttributes {
   event_url: string;
   active: boolean;
   archive: boolean;
+  vehicle_id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface RepairsModel

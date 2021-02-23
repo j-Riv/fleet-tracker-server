@@ -27,6 +27,8 @@ export interface VehicleAttributes {
   city?: string;
   zip?: string;
   cost_new?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface VehicleModel

@@ -4,6 +4,9 @@ export interface RepairFileAttributes {
   id?: number;
   file_type: string;
   file_url: string;
+  repair_id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface RepairFileModel

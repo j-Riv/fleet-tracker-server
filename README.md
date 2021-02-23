@@ -24,10 +24,25 @@ Contents:
 
 # Project setup
 
-Create MySQL DB (vehicle_tracker) and create DB config:
+Create MySQL DB and update DB config at `/src/models/index.ts`
 
-```bash
-cp /config/sample.json /config/config.json
+```javascript
+const sequelize = new Sequelize(
+  (process.env.DB_NAME = 'database_name'),
+  (process.env.DB_USER = 'database_user'),
+  (process.env.DB_PASSWORD = 'database_password'),
+  {
+    port: Number(process.env.DB_PORT) || 3306, // 54320
+    host: process.env.DB_HOST || 'localhost',
+    dialect: 'mysql',
+    pool: {
+      min: 0,
+      max: 5,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
+);
 ```
 
 Install Node Modules

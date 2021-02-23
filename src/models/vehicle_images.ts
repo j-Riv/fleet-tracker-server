@@ -4,6 +4,9 @@ export interface VehicleImageAttributes {
   id?: number;
   file_type: string;
   file_url: string;
+  vehicle_id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface VehicleImageModel

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import jwt from 'jwt-simple';
 import bCrypt from 'bcrypt-nodejs';
 import { db } from '../models';
+import { UserModel as User } from '../models/user';
 dotenv.config();
 
 function tokenForUser(user: any) {
@@ -25,7 +26,7 @@ export const signin = (req: Request, res: Response) => {
       const user = result.dataValues;
       res.status(200).send({ token: tokenForUser(req.user.dataValues), user });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
     });
   // User has already had their email and password auth'd
@@ -50,7 +51,7 @@ export const register = (req: Request, res: Response) => {
       console.log(req.user.dataValues);
       res.status(200).send({ newUser: result });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });
@@ -65,7 +66,7 @@ export const createUser = (req: Request, res: Response) => {
       email: newUser.email,
     },
   })
-    .then(function (existingUser: any) {
+    .then(function (existingUser: User | null) {
       // If a user with email does exist, return an error
       if (existingUser) {
         return res.status(422).send({ error: 'Email is in use' });
@@ -79,7 +80,7 @@ export const createUser = (req: Request, res: Response) => {
         email: newUser.email,
         password: hashedPassword,
         admin: newUser.admin,
-      }).then((user: any) => {
+      }).then((user: User) => {
         if (!user) {
           console.log('Error creating user.');
           res.status(400).send('something went wrong');
@@ -92,7 +93,7 @@ export const createUser = (req: Request, res: Response) => {
         }
       });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });
@@ -111,7 +112,7 @@ export const getCurrentUser = (req: Request, res: Response) => {
       const user = result.dataValues;
       res.json({ currentUser: user });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.json({ currentUser: '' });
     });
@@ -121,10 +122,10 @@ export const getAllUsers = (req: Request, res: Response) => {
   db.User.findAll({
     attributes: ['id', 'email', 'displayName', 'admin'],
   })
-    .then((result: any) => {
+    .then((result: User[]) => {
       res.json({ allUsers: result });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });
@@ -147,11 +148,11 @@ export const updateUser = (req: Request, res: Response) => {
       id: id,
     },
   })
-    .then((updatedRows: any) => {
+    .then(updatedRows => {
       console.log('user updated');
       res.status(200).send('User updated');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       console.log('Error updating user');
       res.status(400).send('something went wrong');
@@ -179,7 +180,7 @@ export const updateUserPassword = (req: Request, res: Response) => {
       id: req.body.data.id,
     },
   })
-    .then((user: any) => {
+    .then((user: User | null) => {
       if (user) {
         user
           .update(userData)
@@ -195,7 +196,7 @@ export const updateUserPassword = (req: Request, res: Response) => {
           });
       }
     })
-    .catch((error: any) => {
+    .catch(error => {
       res.status(400).send('something went wrong');
     });
 };
@@ -207,12 +208,12 @@ export const deleteUser = (req: Request, res: Response) => {
       id: user.id,
     },
   })
-    .then((result: any) => {
+    .then(result => {
       console.log('User deleted');
       console.log(result);
       res.status(200).send('User has been deleted');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });

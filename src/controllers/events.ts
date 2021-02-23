@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { db } from '../models';
+import { MaintenanceModel as MaintenanceRecord } from '../models/maintenance';
+import { RepairsModel as RepairRecord } from '../models/repairs';
+import { MaintenanceFileModel as MaintenanceFile } from '../models/maintenance_file';
+import { RepairFileModel as RepairFile } from '../models/repair_file';
 import fs from 'fs';
-// const Op = db.Sequelize.Op;
-import path from 'path';
 
 // upload
 import multer from 'multer';
@@ -10,7 +12,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // cb(null, path.join(__dirname, '../../public/uploads'));
     let r_path = '../../public/uploads/vehicles/records';
-    fs.mkdir(r_path, { recursive: true }, (err) => {
+    fs.mkdir(r_path, { recursive: true }, err => {
       console.log(err);
     });
   },
@@ -28,10 +30,10 @@ export const allMaintenance = (req: Request, res: Response) => {
       archive: false,
     },
   })
-    .then((records: any) => {
+    .then((records: MaintenanceRecord[]) => {
       res.status(200).json({ records: records });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });
@@ -43,10 +45,10 @@ export const allRepairs = (req: Request, res: Response) => {
       archive: false,
     },
   })
-    .then((records: any) => {
+    .then((records: RepairRecord[]) => {
       res.status(200).json({ records: records });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(400).send('something went wrong');
     });
@@ -69,7 +71,7 @@ export const getMaintenanceById = (req: Request, res: Response) => {
       const record = result.dataValues;
       res.status(200).json({ record });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
     });
 };
@@ -91,7 +93,7 @@ export const getRepairById = (req: Request, res: Response) => {
       const record = result.dataValues;
       res.status(200).json({ record });
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
     });
 };
@@ -99,10 +101,10 @@ export const getRepairById = (req: Request, res: Response) => {
 export const createMaintenanceEvent = (req: Request, res: Response) => {
   const event = req.body;
   db.Maintenance.create(event)
-    .then((event: any) => {
+    .then((event: MaintenanceRecord) => {
       res.status(201).send('created');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(204).send('something went wrong');
     });
@@ -111,10 +113,10 @@ export const createMaintenanceEvent = (req: Request, res: Response) => {
 export const createRepairEvent = (req: Request, res: Response) => {
   const event = req.body;
   db.Repairs.create(event)
-    .then((event: any) => {
+    .then((event: RepairRecord) => {
       res.status(201).send('created');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       res.status(204).send('something went wrong');
     });
@@ -122,7 +124,7 @@ export const createRepairEvent = (req: Request, res: Response) => {
 
 export const addMaintenanceFiles = (req: Request, res: Response) => {
   const upload_images = upload.array('files', 12);
-  upload_images(req, res, (err: any) => {
+  upload_images(req, res, (err: unknown) => {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
       console.log('A Multer error occurred when uploading.');
@@ -145,8 +147,8 @@ export const addMaintenanceFiles = (req: Request, res: Response) => {
         file_url: file.filename,
       };
       db.Maintenance_File.create(data)
-        .then((file: any) => {})
-        .catch((error: any) => {
+        .then((file: MaintenanceFile) => {})
+        .catch(error => {
           console.log(error);
           res.status(204).send('something went wrong');
         });
@@ -157,7 +159,7 @@ export const addMaintenanceFiles = (req: Request, res: Response) => {
 
 export const addRepairFiles = (req: Request, res: Response) => {
   const upload_images = upload.array('files', 12);
-  upload_images(req, res, (err: any) => {
+  upload_images(req, res, (err: unknown) => {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
       console.log('A Multer error occurred when uploading.');
@@ -180,8 +182,8 @@ export const addRepairFiles = (req: Request, res: Response) => {
         file_url: file.filename,
       };
       db.Repair_File.create(data)
-        .then((file: any) => {})
-        .catch((error: any) => {
+        .then((file: RepairFile) => {})
+        .catch(error => {
           console.log(error);
           res.status(204).send('something went wrong');
         });
@@ -198,12 +200,12 @@ export const updateMaintenanceEvent = (req: Request, res: Response) => {
       id: id,
     },
   })
-    .then((updatedRows: any) => {
+    .then(updatedRows => {
       console.log(updatedRows);
       console.log('record updated');
       res.status(200).send('Record updated');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       console.log('Error updating record');
       res.status(400).send('something went wrong');
@@ -218,11 +220,11 @@ export const updateRepairEvent = (req: Request, res: Response) => {
       id: id,
     },
   })
-    .then((updatedRows: any) => {
+    .then(updatedRows => {
       console.log('record updated');
       res.status(200).send('Record updated');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       console.log('Error updating record');
       res.status(400).send('something went wrong');
@@ -242,12 +244,12 @@ export const archiveMaintenanceEventById = (req: Request, res: Response) => {
       },
     }
   )
-    .then((updatedRows: any) => {
+    .then(updatedRows => {
       console.log(updatedRows);
       console.log('record updated');
       res.status(200).send('Record updated');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       console.log('Error updating record');
       res.status(400).send('something went wrong');
@@ -267,12 +269,12 @@ export const archiveRepairEventById = (req: Request, res: Response) => {
       },
     }
   )
-    .then((updatedRows: any) => {
+    .then(updatedRows => {
       console.log(updatedRows);
       console.log('record updated');
       res.status(200).send('Record updated');
     })
-    .catch((error: any) => {
+    .catch(error => {
       console.log(error);
       console.log('Error updating record');
       res.status(400).send('something went wrong');
