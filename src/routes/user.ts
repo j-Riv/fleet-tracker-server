@@ -1,6 +1,4 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { google } from 'googleapis';
-const OAuth2 = google.auth.OAuth2;
 import dotenv from 'dotenv';
 dotenv.config();
 // controller
@@ -51,42 +49,6 @@ export default (app: express.Application) => {
   app.get('/user/dashboard', authCheck, function (req: Request, res: Response) {
     res.json(req.user);
   });
-
-  app.get('/user/calendar', authCheck, function (req: Request, res: Response) {
-    var oauth2Client = getOAuthClient();
-    oauth2Client.setCredentials({
-      access_token: req.user.accessToken,
-      refresh_token: req.user.refreshToken,
-    });
-    google.options({ auth: oauth2Client });
-    const calendar = google.calendar({ version: 'v3' });
-    calendar.events.list(
-      {
-        calendarId: 'primary',
-        timeMin: new Date().toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime',
-      },
-      (error: any, result: any) => {
-        if (error) return console.log('The API returned an error: ' + error);
-        const eventsResult = result.data.items;
-        if (eventsResult.length) {
-          console.log('Upcoming 10 events:');
-          let events = 'Upcoming 10 events: ';
-          eventsResult.map((event: any, i: any) => {
-            const start = event.start.dateTime || event.start.date;
-            console.log(`${start} - ${event.summary}`);
-            events = events + `${start} - ${event.summary}, `;
-          });
-          res.send(events);
-        } else {
-          console.log('No upcoming events found.');
-          res.send('No Upcoming events found.');
-        }
-      }
-    );
-  });
 };
 
 function authCheck(req: Request, res: Response, next: NextFunction) {
@@ -97,12 +59,4 @@ function authCheck(req: Request, res: Response, next: NextFunction) {
     // if logged in
     next();
   }
-}
-
-function getOAuthClient() {
-  return new OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    'http://localhost:3000/auth/google/callback'
-  );
 }
